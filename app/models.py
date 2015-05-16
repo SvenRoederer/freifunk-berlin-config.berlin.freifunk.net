@@ -49,6 +49,11 @@ class IPRequest(db.Model):
         db.session.commit()
 
 
+    def sendcontactmail(self, signed_token):
+        if not self._verify(signed_token, 'contactmail'):
+            raise BadRequest(u"Dein Token ist ungültig!")
+
+
     def _verify(self, signed_token, salt, timeout = None):
         serializer = URLSafeTimedSerializer(self.token, salt)
         return self.name == serializer.loads(signed_token, max_age=timeout)
@@ -71,6 +76,11 @@ class IPRequest(db.Model):
     @property
     def token_destroy(self):
         return self._gen_signed_token('destroy')
+
+
+    @property
+    def token_contactmail(self):
+        return self._gen_signed_token('contactmail')
 
 
     @property
